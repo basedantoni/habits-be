@@ -1,8 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"basedantoni/habits-be/internal/database"
 
@@ -11,7 +13,6 @@ import (
 
 func (cfg *apiConfig) createHabitHandler(w http.ResponseWriter, r *http.Request) {
 	type bodyParams struct {
-		Id    string `json:"id"`
 		Title string `json:"title"`
 	}
 
@@ -25,6 +26,8 @@ func (cfg *apiConfig) createHabitHandler(w http.ResponseWriter, r *http.Request)
 	habit, err := cfg.DB.CreateHabit(r.Context(), database.CreateHabitParams{
 		ID:    nanoid.New(),
 		Title: params.Title,
+		CreatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
+		UpdatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
 	})
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Could not create new feed")

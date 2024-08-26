@@ -23,6 +23,7 @@ go.work
 .env
 tmp
 .air.toml
+.DS_Store
 
 #sqlite3
 *.db

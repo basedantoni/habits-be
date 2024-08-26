@@ -56,6 +56,17 @@ func main() {
 		r.Get("/{id}", apiCfg.showHabitHandler)
 		r.Put("/{id}", apiCfg.updateHabitHandler)
 		r.Delete("/{id}", apiCfg.deleteHabitHandler)
+
+		r.Get("/{id}/contributions", apiCfg.indexHabitContributionHandler)
+	})
+
+	// Contributions Handlers
+	v1Router.Route("/contributions", func(r chi.Router) {
+		r.Post("/", apiCfg.createContributionHandler)
+		r.Get("/", apiCfg.indexContributionHandler)
+		// r.Get("/{id}", apiCfg.showContributionHandler)
+		// r.Put("/{id}", apiCfg.updateContributionHandler)
+		// r.Delete("/{id}", apiCfg.deleteContributionHandler)
 	})
 
 	router.Mount("/v1", v1Router)

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"basedantoni/habits-be/internal/database"
 
@@ -25,7 +27,7 @@ func (cfg *apiConfig) updateHabitHandler(w http.ResponseWriter, r *http.Request)
 
 	err = cfg.DB.UpdateHabit(r.Context(), database.UpdateHabitParams{
 		Title: params.Title,
-		ID: id,
+		UpdatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
 	})
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Could not update new habit")

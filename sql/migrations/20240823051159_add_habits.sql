@@ -1,7 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE habits (
-    id TEXT PRIMARY KEY,
+    pk INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    id TEXT NOT NULL UNIQUE,
     title TEXT NOT NULL
 );
 -- +goose StatementEnd

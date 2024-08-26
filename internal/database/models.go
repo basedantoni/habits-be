@@ -4,7 +4,23 @@
 
 package database
 
+import (
+	"database/sql"
+)
+
+type Contribution struct {
+	Pk        int64
+	ID        string
+	TimeSpent int64
+	HabitID   sql.NullInt64
+	CreatedAt sql.NullString
+	UpdatedAt sql.NullString
+}
+
 type Habit struct {
-	ID    string
-	Title string
+	Pk        int64
+	ID        string
+	Title     string
+	CreatedAt sql.NullString
+	UpdatedAt sql.NullString
 }

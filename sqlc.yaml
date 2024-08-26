@@ -3,6 +3,7 @@ sql:
   - schema: "sql/migrations"
     queries:
       - "sql/queries/habits.sql"
+      - "sql/queries/contributions.sql"
     engine: "sqlite"
     gen:
       go:
