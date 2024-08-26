@@ -1,0 +1,9 @@
+version: "2"
+sql:
+  - schema: "sql/migrations"
+    queries:
+      - "sql/queries/habits.sql"
+    engine: "sqlite"
+    gen:
+      go:
+        out: "internal/database"
