@@ -1,13 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 )
 
 func (cfg *apiConfig) indexHabitHandler(w http.ResponseWriter, r *http.Request) {
 	databaseHabits, err := cfg.DB.ListHabits(r.Context())
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
+		e := fmt.Sprintf("%s %s", "Could not list habits", err.Error())
+		respondWithError(w, http.StatusBadRequest, e)
 	}
 
 	habits := []Habit{}

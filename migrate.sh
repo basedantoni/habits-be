@@ -15,7 +15,7 @@ if [ ! -d $db_dir ]; then
     mkdir -p "$db_dir"
 fi
 
-goose -dir="./sql/migrations" sqlite3 ../etc/habits/habits.db up
+goose -dir="./sql/migrations" sqlite3 ../data/habits.db up
 
 echo "....Finished provisioning the database."
 

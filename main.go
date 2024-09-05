@@ -2,12 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"basedantoni/habits-be/factory"
 	"basedantoni/habits-be/internal/database"
 
 	"github.com/go-chi/chi/v5"
@@ -25,7 +23,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	// Database
-	dbPath := "../etc/habits/habits.db"
+	dbPath := "../data/habits.db"
 	if os.Getenv("ENV") == "development" {
 		dbPath = "./habits.db"
 	}
@@ -79,28 +77,27 @@ func main() {
 
 	router.Mount("/v1", v1Router)
 
+	// entityFactory := factory.SimpleEntityFactory{}
 
-	entityFactory := factory.SimpleEntityFactory{}
+    // // Create a user entity
+    // user, err := entityFactory.CreateEntity("habit")
+    // if err != nil {
+    //     fmt.Println(err)
+    //     return
+    // }
 
-    // Create a user entity
-    user, err := entityFactory.CreateEntity("habit")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
+    // user.Save()
+    // user.Validate()
 
-    user.Save()
-    user.Validate()
+    // // Create a product entity
+    // product, err := entityFactory.CreateEntity("contribution")
+    // if err != nil {
+    //      fmt.Println(err)
+    //      return
+    // }
 
-    // Create a product entity
-    product, err := entityFactory.CreateEntity("contribution")
-    if err != nil {
-         fmt.Println(err)
-         return
-    }
-
-    product.Save()
-    product.Validate()
+    // product.Save()
+    // product.Validate()
 
 	// Initialize server
 	server := &http.Server{Handler: router, Addr: ":" + port}

@@ -16,9 +16,6 @@ COPY . .
 # Compile the application and name the binary as 'app'
 RUN go build -v -o app .
 
-# Set the environment variable for the database URL
-ENV DATABASE_URL="sqlite:/etc/habits/habits.db"
-
 # Expose the port the app listens on
 EXPOSE 8080
 
