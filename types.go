@@ -12,14 +12,15 @@ type apiConfig struct {
 type Habit struct {
 	Id    string `json:"id"`
 	Title string `json:"title"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	CreatedAt *time.Time `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
+	Streak int64 `json:"streak"`
 }
 
 type Contribution struct {
 	Id        string `json:"id"`
-	TimeSpent int64  `json:"time_spent"`
-	HabitId   int64 `json:"habit_id"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	TimeSpent int64  `json:"timeSpent"`
+	HabitId   int64 `json:"habitId"`
+	CreatedAt *time.Time `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
 }

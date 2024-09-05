@@ -53,7 +53,7 @@ func nullStringToTimePtr(ns sql.NullString) *time.Time {
 	return nil
 }
 
-func nullInt64ToInt64Ptr(ni sql.NullInt64) int64 {
+func nullInt64ToInt64(ni sql.NullInt64) int64 {
 	if ni.Valid {
 		return ni.Int64
 	}
@@ -66,15 +66,15 @@ func databaseHabitToHabit(habit database.Habit) Habit {
 		Title: habit.Title,
 		CreatedAt: nullStringToTimePtr(habit.CreatedAt),
 		UpdatedAt: nullStringToTimePtr(habit.UpdatedAt),
+		Streak: nullInt64ToInt64(habit.Streak),
 	}
 }
-
 
 func databaseContributionToContribution(contribution database.Contribution) Contribution {
 	return Contribution{
 		Id:    contribution.ID,
 		TimeSpent: contribution.TimeSpent,
-		HabitId: nullInt64ToInt64Ptr(contribution.HabitID),
+		HabitId: nullInt64ToInt64(contribution.HabitID),
 		CreatedAt: nullStringToTimePtr(contribution.CreatedAt),
 		UpdatedAt: nullStringToTimePtr(contribution.UpdatedAt),
 	}

@@ -16,7 +16,7 @@ INSERT INTO habits (
 ) VALUES (
   ?, ?, ?, ?
 )
-RETURNING pk, id, title, created_at, updated_at
+RETURNING pk, id, title, created_at, updated_at, streak
 `
 
 type CreateHabitParams struct {
@@ -40,6 +40,7 @@ func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit
 		&i.Title,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Streak,
 	)
 	return i, err
 }
@@ -55,7 +56,7 @@ func (q *Queries) DeleteHabit(ctx context.Context, id string) error {
 }
 
 const getHabit = `-- name: GetHabit :one
-SELECT pk, id, title, created_at, updated_at FROM habits
+SELECT pk, id, title, created_at, updated_at, streak FROM habits
 WHERE id = ? LIMIT 1
 `
 
@@ -68,12 +69,13 @@ func (q *Queries) GetHabit(ctx context.Context, id string) (Habit, error) {
 		&i.Title,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Streak,
 	)
 	return i, err
 }
 
 const listHabits = `-- name: ListHabits :many
-SELECT pk, id, title, created_at, updated_at FROM habits
+SELECT pk, id, title, created_at, updated_at, streak FROM habits
 ORDER BY title
 LIMIT 20
 `
@@ -93,6 +95,7 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 			&i.Title,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.Streak,
 		); err != nil {
 			return nil, err
 		}
@@ -109,17 +112,23 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 
 const updateHabit = `-- name: UpdateHabit :exec
 UPDATE habits
-  SET title = ?, updated_at = ?
+  SET title = ?, updated_at = ?, streak = ?
 WHERE id = ?
 `
 
 type UpdateHabitParams struct {
 	Title     string
 	UpdatedAt sql.NullString
+	Streak    sql.NullInt64
 	ID        string
 }
 
 func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) error {
-	_, err := q.db.ExecContext(ctx, updateHabit, arg.Title, arg.UpdatedAt, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateHabit,
+		arg.Title,
+		arg.UpdatedAt,
+		arg.Streak,
+		arg.ID,
+	)
 	return err
 }

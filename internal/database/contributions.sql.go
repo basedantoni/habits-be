@@ -76,6 +76,106 @@ func (q *Queries) GetContribution(ctx context.Context, id string) (Contribution,
 	return i, err
 }
 
+const getContributionsByPastYear = `-- name: GetContributionsByPastYear :many
+SELECT pk, id, time_spent, habit_id, created_at, updated_at
+FROM contributions
+WHERE habit_id = ?
+AND created_at >= date('now', '-1 year')
+ORDER BY created_at ASC
+`
+
+func (q *Queries) GetContributionsByPastYear(ctx context.Context, habitID sql.NullInt64) ([]Contribution, error) {
+	rows, err := q.db.QueryContext(ctx, getContributionsByPastYear, habitID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Contribution
+	for rows.Next() {
+		var i Contribution
+		if err := rows.Scan(
+			&i.Pk,
+			&i.ID,
+			&i.TimeSpent,
+			&i.HabitID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getContributionsByYear = `-- name: GetContributionsByYear :many
+SELECT pk, id, time_spent, habit_id, created_at, updated_at FROM contributions
+WHERE habit_id = ? AND strftime('%Y', created_at) = ?
+ORDER BY created_at ASC
+`
+
+type GetContributionsByYearParams struct {
+	HabitID   sql.NullInt64
+	CreatedAt sql.NullString
+}
+
+func (q *Queries) GetContributionsByYear(ctx context.Context, arg GetContributionsByYearParams) ([]Contribution, error) {
+	rows, err := q.db.QueryContext(ctx, getContributionsByYear, arg.HabitID, arg.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Contribution
+	for rows.Next() {
+		var i Contribution
+		if err := rows.Scan(
+			&i.Pk,
+			&i.ID,
+			&i.TimeSpent,
+			&i.HabitID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getLastContribution = `-- name: GetLastContribution :one
+SELECT pk, id, time_spent, habit_id, created_at, updated_at FROM contributions
+WHERE habit_id = ?
+ORDER BY created_at DESC
+LIMIT 1
+`
+
+func (q *Queries) GetLastContribution(ctx context.Context, habitID sql.NullInt64) (Contribution, error) {
+	row := q.db.QueryRowContext(ctx, getLastContribution, habitID)
+	var i Contribution
+	err := row.Scan(
+		&i.Pk,
+		&i.ID,
+		&i.TimeSpent,
+		&i.HabitID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const listContributions = `-- name: ListContributions :many
 SELECT pk, id, time_spent, habit_id, created_at, updated_at FROM contributions
 LIMIT 20

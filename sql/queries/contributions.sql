@@ -2,6 +2,24 @@
 SELECT * FROM contributions
 WHERE id = ? LIMIT 1;
 
+-- name: GetContributionsByYear :many
+SELECT * FROM contributions
+WHERE habit_id = ? AND strftime('%Y', created_at) = ?
+ORDER BY created_at ASC;
+
+-- name: GetContributionsByPastYear :many
+SELECT *
+FROM contributions
+WHERE habit_id = ?
+AND created_at >= date('now', '-1 year')
+ORDER BY created_at ASC;
+
+-- name: GetLastContribution :one
+SELECT * FROM contributions
+WHERE habit_id = ?
+ORDER BY created_at DESC
+LIMIT 1;
+
 -- name: ListContributions :many
 SELECT * FROM contributions
 LIMIT 20;

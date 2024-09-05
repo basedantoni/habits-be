@@ -12,7 +12,8 @@ import (
 
 func (cfg *apiConfig) createContributionHandler(w http.ResponseWriter, r *http.Request) {
 	type bodyParams struct {
-		HabitId string `json:"habit_id"`
+		HabitId string `json:"habitId"`
+		TimeSpent int64 `json:"timeSpent"`
 	}
 
 	params := bodyParams{}
@@ -25,12 +26,15 @@ func (cfg *apiConfig) createContributionHandler(w http.ResponseWriter, r *http.R
 	dbHabit, err := cfg.DB.GetHabit(r.Context(), params.HabitId)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "Could not find habit")
+		return
 	}
+
+	// lastContribution, err := cfg.DB.GetLastContribution(r.Context(), db)
 
 	contribution, err := cfg.DB.CreateContribution(r.Context(), database.CreateContributionParams{
 		ID: nanoid.New(),
 		HabitID: sql.NullInt64{Int64: dbHabit.Pk, Valid: true},
-		TimeSpent: 0,
+		TimeSpent: params.TimeSpent,
 		CreatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
 		UpdatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
 	})

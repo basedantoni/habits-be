@@ -30,17 +30,17 @@ func (cfg *apiConfig) createHabitHandler(w http.ResponseWriter, r *http.Request)
 		UpdatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Could not create new feed")
+		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 
 	type response struct {
-		Habit database.Habit `json:"habit"`
+		Habit Habit `json:"habit"`
 	}
 
 	respondWithJSON(
 		w, http.StatusOK,
 		response{
-			Habit: habit,
+			Habit: databaseHabitToHabit(habit),
 		},
 	)
 }

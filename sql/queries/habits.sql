@@ -17,7 +17,7 @@ RETURNING *;
 
 -- name: UpdateHabit :exec
 UPDATE habits
-  SET title = ?, updated_at = ?
+  SET title = ?, updated_at = ?, streak = ?
 WHERE id = ?;
 
 -- name: DeleteHabit :exec

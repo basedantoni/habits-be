@@ -23,4 +23,5 @@ type Habit struct {
 	Title     string
 	CreatedAt sql.NullString
 	UpdatedAt sql.NullString
+	Streak    sql.NullInt64
 }
