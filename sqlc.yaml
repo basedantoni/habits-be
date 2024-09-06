@@ -2,6 +2,7 @@ version: "2"
 sql:
   - schema: "sql/migrations"
     queries:
+      - "sql/queries/users.sql"
       - "sql/queries/habits.sql"
       - "sql/queries/contributions.sql"
     engine: "sqlite"

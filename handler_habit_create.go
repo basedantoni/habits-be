@@ -26,6 +26,10 @@ func (cfg *apiConfig) createHabitHandler(w http.ResponseWriter, r *http.Request)
 	habit, err := cfg.DB.CreateHabit(r.Context(), database.CreateHabitParams{
 		ID:    nanoid.New(),
 		Title: params.Title,
+		UserID: sql.NullInt64{
+			Valid: r.Context().Value("userID").(int64) != 0,
+			Int64: r.Context().Value("userID").(int64),
+		},
 		CreatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
 		UpdatedAt: sql.NullString{String: time.Now().Format(time.RFC3339), Valid: true},
 	})

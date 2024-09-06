@@ -4,14 +4,14 @@ WHERE id = ? LIMIT 1;
 
 -- name: ListHabits :many
 SELECT * FROM habits
-ORDER BY title
+WHERE user_id = ?
 LIMIT 20;
 
 -- name: CreateHabit :one
 INSERT INTO habits (
-  id, title, created_at, updated_at
+  id, title, user_id, created_at, updated_at
 ) VALUES (
-  ?, ?, ?, ?
+  ?, ?, ?, ?, ?
 )
 RETURNING *;
 

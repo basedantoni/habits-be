@@ -60,6 +60,15 @@ func nullInt64ToInt64(ni sql.NullInt64) int64 {
 	return 0
 }
 
+func databaseUserToUser(user database.User) User {
+	return User{
+		Id:    user.ID,
+		Email: user.Email,
+		CreatedAt: nullStringToTimePtr(sql.NullString{String: user.CreatedAt, Valid: user.CreatedAt != ""}),
+		UpdatedAt: nullStringToTimePtr(sql.NullString{String: user.UpdatedAt, Valid: user.UpdatedAt != ""}),
+	}
+}
+
 func databaseHabitToHabit(habit database.Habit) Habit {
 	return Habit{
 		Id:    habit.ID,

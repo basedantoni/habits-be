@@ -14,8 +14,15 @@ type apiConfig struct {
 }
 
 type Claims struct {
-	Email string `json:"email"`
+	User database.User `json:"user"`
 	jwt.StandardClaims
+}
+
+type User struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+	CreatedAt *time.Time `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
 }
 
 type Habit struct {

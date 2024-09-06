@@ -1,7 +1,9 @@
 package main
 
 import (
+	"basedantoni/habits-be/internal/database"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,6 +11,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/aidarkhanov/nanoid"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/joho/godotenv"
 )
@@ -51,9 +54,23 @@ func (cfg *apiConfig) googleAuthCallbackHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	user, err := cfg.DB.GetUser(r.Context(), userInfo.Email)
+	if err != nil {
+		user, err = cfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+			ID: nanoid.New(),
+			Email: userInfo.Email,
+			Password: sql.NullString{},
+			CreatedAt: time.Now().Format(time.RFC3339),
+			UpdatedAt: time.Now().Format(time.RFC3339),
+		})
+		if err != nil {
+			respondWithError(w, http.StatusBadRequest, "Could not create new user")
+		}
+	}
+
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
-		Email: userInfo.Email,
+		User: user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

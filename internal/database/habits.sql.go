@@ -12,16 +12,17 @@ import (
 
 const createHabit = `-- name: CreateHabit :one
 INSERT INTO habits (
-  id, title, created_at, updated_at
+  id, title, user_id, created_at, updated_at
 ) VALUES (
-  ?, ?, ?, ?
+  ?, ?, ?, ?, ?
 )
-RETURNING pk, id, title, created_at, updated_at, streak
+RETURNING pk, id, title, created_at, updated_at, streak, user_id
 `
 
 type CreateHabitParams struct {
 	ID        string
 	Title     string
+	UserID    sql.NullInt64
 	CreatedAt sql.NullString
 	UpdatedAt sql.NullString
 }
@@ -30,6 +31,7 @@ func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit
 	row := q.db.QueryRowContext(ctx, createHabit,
 		arg.ID,
 		arg.Title,
+		arg.UserID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 	)
@@ -41,6 +43,7 @@ func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Streak,
+		&i.UserID,
 	)
 	return i, err
 }
@@ -56,7 +59,7 @@ func (q *Queries) DeleteHabit(ctx context.Context, id string) error {
 }
 
 const getHabit = `-- name: GetHabit :one
-SELECT pk, id, title, created_at, updated_at, streak FROM habits
+SELECT pk, id, title, created_at, updated_at, streak, user_id FROM habits
 WHERE id = ? LIMIT 1
 `
 
@@ -70,18 +73,19 @@ func (q *Queries) GetHabit(ctx context.Context, id string) (Habit, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Streak,
+		&i.UserID,
 	)
 	return i, err
 }
 
 const listHabits = `-- name: ListHabits :many
-SELECT pk, id, title, created_at, updated_at, streak FROM habits
-ORDER BY title
+SELECT pk, id, title, created_at, updated_at, streak, user_id FROM habits
+WHERE user_id = ?
 LIMIT 20
 `
 
-func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
-	rows, err := q.db.QueryContext(ctx, listHabits)
+func (q *Queries) ListHabits(ctx context.Context, userID sql.NullInt64) ([]Habit, error) {
+	rows, err := q.db.QueryContext(ctx, listHabits, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -96,6 +100,7 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.Streak,
+			&i.UserID,
 		); err != nil {
 			return nil, err
 		}

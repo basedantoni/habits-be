@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"basedantoni/habits-be/internal/database"
 	"context"
 	"log"
 	"net/http"
@@ -11,10 +12,9 @@ import (
 )
 
 type Claims struct {
-	Email string `json:"email"`
+	User database.User `json:"user"`
 	jwt.StandardClaims
 }
-
 
 func Authenticate(next http.Handler) http.Handler {
 	err := godotenv.Load()
@@ -54,7 +54,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "email", claims.Email)
+		ctx := context.WithValue(r.Context(), "userID", claims.User.Pk)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

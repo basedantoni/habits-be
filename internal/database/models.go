@@ -24,4 +24,14 @@ type Habit struct {
 	CreatedAt sql.NullString
 	UpdatedAt sql.NullString
 	Streak    sql.NullInt64
+	UserID    sql.NullInt64
+}
+
+type User struct {
+	Pk        int64
+	ID        string
+	Email     string
+	Password  sql.NullString
+	CreatedAt string
+	UpdatedAt string
 }
