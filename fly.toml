@@ -9,8 +9,10 @@ primary_region = 'ord'
 [build]
 
 [env]
-  DATABASE_URL = 'sqlite:/data/habits.db'
   ENV = 'production'
+  BASE_URL = 'https://habits-be.fly.dev'
+  CLIENT_BASE_URL = 'https://habits-fe.fly.dev/'
+  PORT = '8080'
 
 [[mounts]]
   source = 'data'

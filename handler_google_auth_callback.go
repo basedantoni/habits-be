@@ -89,6 +89,6 @@ func (cfg *apiConfig) googleAuthCallbackHandler(w http.ResponseWriter, r *http.R
 	}
 
 	// Redirect to frontend with token as query parameter
-	redirectURL := fmt.Sprintf("http://localhost:5173?token=%s", tokenString)
+	redirectURL := fmt.Sprintf("%s?token=%s", os.Getenv("CLIENT_BASE_URL"), tokenString)
 	http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
 }

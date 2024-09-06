@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -43,7 +44,7 @@ func main() {
 	conf := &oauth2.Config{
 		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
 		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		RedirectURL:  "http://localhost:8080/auth/google/callback",
+		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", os.Getenv("BASE_URL")),
 		Scopes: []string{"email"},
 		Endpoint: google.Endpoint,
 	}

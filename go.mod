@@ -11,9 +11,13 @@ require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/mattn/go-sqlite3 v1.14.22
+	github.com/pressly/goose v2.7.0+incompatible
 )
 
-require github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/pkg/errors v0.9.1 // indirect
+)
 
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
