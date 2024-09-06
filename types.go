@@ -3,10 +3,19 @@ package main
 import (
 	"basedantoni/habits-be/internal/database"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/oauth2"
 )
 
 type apiConfig struct {
 	DB *database.Queries
+	Auth *oauth2.Config
+}
+
+type Claims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
 }
 
 type Habit struct {

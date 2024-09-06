@@ -6,12 +6,15 @@ import (
 	"net/http"
 	"os"
 
+	"basedantoni/habits-be/internal/auth"
 	"basedantoni/habits-be/internal/database"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 func main() {
@@ -36,8 +39,18 @@ func main() {
 
 	dbQueries := database.New(db)
 
+	// Google OAuth2
+	conf := &oauth2.Config{
+		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		RedirectURL:  "http://localhost:8080/auth/google/callback",
+		Scopes: []string{"email"},
+		Endpoint: google.Endpoint,
+	}
+
 	apiCfg := apiConfig{
 		DB: dbQueries,
+		Auth: conf,
 	}
 
 	// Router
@@ -52,8 +65,15 @@ func main() {
 		MaxAge:           300,
 	}))
 
+	// Auth
+	router.Get("/auth/google", apiCfg.googleAuthHandler)
+	router.Get("/auth/google/callback", apiCfg.googleAuthCallbackHandler)
+
+	// Health Handler
+	router.Get("/health", healthHandler)
+
 	v1Router := chi.NewRouter()
-	v1Router.Get("/health", healthHandler)
+	v1Router.Use(auth.Authenticate)
 
 	// Habits Handlers
 	v1Router.Route("/habits", func(r chi.Router) {
