@@ -11,7 +11,7 @@ primary_region = 'ord'
 [env]
   ENV = 'production'
   BASE_URL = 'https://habits-be.fly.dev'
-  CLIENT_BASE_URL = 'https://habits-fe.fly.dev/'
+  CLIENT_BASE_URL = 'https://habits-fe.vercel.app/'
   PORT = '8080'
 
 [[mounts]]

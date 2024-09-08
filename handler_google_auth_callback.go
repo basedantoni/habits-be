@@ -4,10 +4,12 @@ import (
 	"basedantoni/habits-be/internal/database"
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -21,6 +23,12 @@ func (cfg *apiConfig) googleAuthCallbackHandler(w http.ResponseWriter, r *http.R
 	if err != nil {
 		log.Fatal("Could not load environment variables")
 	}
+
+	state := r.URL.Query().Get("state")
+    originalDestination, err := base64.StdEncoding.DecodeString(state)
+    if err != nil || len(originalDestination) == 0 {
+        originalDestination = []byte("/")
+    }
 	
 	// Get the authorization code from the URL query parameters
 	code := r.URL.Query().Get("code")
@@ -89,6 +97,12 @@ func (cfg *apiConfig) googleAuthCallbackHandler(w http.ResponseWriter, r *http.R
 	}
 
 	// Redirect to frontend with token as query parameter
-	redirectURL := fmt.Sprintf("%s?token=%s", os.Getenv("CLIENT_BASE_URL"), tokenString)
+	redirectURL := fmt.Sprintf(
+		"%s?token=%s&redirect=%s", 
+		os.Getenv("CLIENT_BASE_URL"), 
+		tokenString, 
+		url.QueryEscape(string(originalDestination)),
+	)
+	
 	http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
 }
